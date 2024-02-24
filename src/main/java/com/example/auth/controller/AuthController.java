@@ -37,10 +37,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
-        this.doAuthenticate(request.getEmail(), request.getPassword());
+        this.doAuthenticate(request.getUsername(), request.getPassword());
 
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = this.helper.generateToken(userDetails);
 
         JwtResponse response = JwtResponse.builder()
@@ -60,15 +60,15 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    private void doAuthenticate(String email, String password) {
+    private void doAuthenticate(String username, String password) {
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
         try {
             manager.authenticate(authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            logger.info("Authentication successful for user: {}", email);
+            logger.info("Authentication successful for user: {}", username);
         } catch (BadCredentialsException e) {
-            logger.error("Authentication failed for user: {}", email, e);
+            logger.error("Authentication failed for user: {}", username, e);
             throw new BadCredentialsException(" Invalid Username or Password  !!");
         }
 

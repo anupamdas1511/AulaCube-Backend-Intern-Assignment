@@ -34,7 +34,7 @@ public class HomeController {
     }
     // API: http://localhost:8081/home/remove-user
     @DeleteMapping("/remove-user")
-    public ResponseEntity<?> removeUser(@RequestBody String username) {
+    public ResponseEntity<?> removeUser(@RequestParam String username) {
         try {
             userService.deleteUser(username);
             return ResponseEntity.ok("User removed");

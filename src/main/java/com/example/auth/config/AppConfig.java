@@ -1,5 +1,6 @@
 package com.example.auth.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,11 +14,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 public class AppConfig {
+    @Value("{admin-username}")
+    private String username;
+    @Value("{admin-password}")
+    private String password;
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.builder().
-                username("dasanupam151101@gmail.com")
-                .password(passwordEncoder().encode("anupam")).roles("ADMIN").
+                username(username)
+                .password(passwordEncoder().encode(password)).roles("ADMIN").
                 build();
         return new InMemoryUserDetailsManager(userDetails);
     }
