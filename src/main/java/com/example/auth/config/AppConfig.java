@@ -14,9 +14,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 public class AppConfig {
-    @Value("{admin-username}")
+    @Value("${admin-username}")
     private String username;
-    @Value("{admin-password}")
+    @Value("${admin-password}")
     private String password;
     @Bean
     public UserDetailsService userDetailsService() {

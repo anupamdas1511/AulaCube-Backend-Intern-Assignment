@@ -2,6 +2,8 @@ package com.example.auth.services.impl;
 
 import com.example.auth.models.User;
 import com.example.auth.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,11 +13,16 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     private final Map<String, User> inMemoryUserRepository = new HashMap<>();
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public User createUser(User user) throws Exception {
         if (inMemoryUserRepository.containsKey(user.getUsername())) {
             throw new Exception("Username Already Exists");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("USER");
         inMemoryUserRepository.put(user.getUsername(), user);
         return user;
     }
@@ -24,6 +31,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(String username, User updatedUser) {
         if (inMemoryUserRepository.containsKey(username)) {
             updatedUser.setUsername(username);
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             updatedUser.setRole("USER");
             inMemoryUserRepository.put(username, updatedUser);
             return updatedUser;

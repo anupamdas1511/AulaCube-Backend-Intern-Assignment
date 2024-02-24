@@ -1,7 +1,9 @@
 package com.example.auth.controller;
 
+import com.example.auth.models.ResponseUser;
 import com.example.auth.models.User;
 import com.example.auth.services.UserService;
+import com.example.auth.utils.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +19,9 @@ public class HomeController {
 
     // API: http://localhost:8081/home/users
     @GetMapping("/users")
-    public List<User> getUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(Helper.convertToResponseUsers(users));
     }
 
     // API: http://localhost:8081/home/add-user
@@ -27,14 +30,22 @@ public class HomeController {
         user.setRole("USER");
         try {
             userService.createUser(user);
-            return ResponseEntity.ok(user);
+            ResponseUser responseUser = new ResponseUser(
+                    user.getName(),
+                    user.getEmail(),
+                    user.getUsername(),
+                    user.getPhoneNumber(),
+                    user.getRole()
+            );
+            return ResponseEntity.ok(responseUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     // API: http://localhost:8081/home/remove-user
     @DeleteMapping("/remove-user")
-    public ResponseEntity<?> removeUser(@RequestParam String username) {
+    public ResponseEntity<String> removeUser(@RequestParam String username) {
         try {
             userService.deleteUser(username);
             return ResponseEntity.ok("User removed");
@@ -42,12 +53,20 @@ public class HomeController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     // API: http://localhost:8081/home/edit-user
     @PatchMapping("/edit-user")
     public ResponseEntity<?> editUser(@RequestParam String username, @RequestBody User user) {
         try {
             userService.updateUser(username, user);
-            return ResponseEntity.ok(user);
+            ResponseUser responseUser = new ResponseUser(
+                    user.getName(),
+                    user.getEmail(),
+                    user.getUsername(),
+                    user.getPhoneNumber(),
+                    user.getRole()
+            );
+            return ResponseEntity.ok(responseUser);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

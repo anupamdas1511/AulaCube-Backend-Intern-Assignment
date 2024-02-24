@@ -12,4 +12,5 @@ public class ResponseUser {
     private String email;
     private String username;
     private String phoneNumber;
+    private String role;
 }
